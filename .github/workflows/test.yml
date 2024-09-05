@@ -1,0 +1,23 @@
+name: ARC Test Containers Workflow
+run-name: Run test workflow on ${{ inputs.arc_name }}
+on:
+  workflow_dispatch:
+    inputs:
+      arc_name:
+        description: 'Target ARC name used for `runs-on` in job'
+        required: true
+        default: "runners-dind"
+jobs:
+  arc-runner-job:
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [1, 2, 3,4,5,6,7,8,9,10,11,12]
+    runs-on: ${{ inputs.arc_name }}
+    container: hashicorp/terraform
+    steps:
+    - name: simple
+      run: |
+        echo "hello from ${{ matrix.job }}"
+        terraform --version
+        sleep 120
