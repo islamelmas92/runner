@@ -33,10 +33,13 @@ jobs:
 
   docker:
     needs: prepare
-    runs-on: ${{ github.event.inputs.arc_name || 'runners-dind' }}
+    runs-on: runners-dind
     container:
-      image: "gcr.io/kaniko-project/executor:latest"
-      options: --entrypoint=""
+      image: registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+      # image:  "docker.io/islamelmas92/build"
+      credentials:
+        username: ${{ secrets.DO_REGISTRY }}
+        password: ${{ secrets.DO_REGISTRY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,9 +49,11 @@ jobs:
           APP_NAME: ${{ needs.prepare.outputs.app_name }}
           IMAGE_TAG: ${{ needs.prepare.outputs.image_tag }}
         run: |
+          echo $APP_NAME
+          echo $IMAGE_TAG
           echo "{\"auths\":{\"registry.digitalocean.com\":{\"auth\":\"$(echo -n ${{ secrets.DO_REGISTRY }}:${{ secrets.DO_REGISTRY }} | base64 -w 0)\"}}}" > /kaniko/.docker/config.json
-          /kaniko/executor \
-            --context . \
-            --dockerfile Dockerfile \
-            --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:${IMAGE_TAG} \
-            --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:latest
+          # /kaniko/executor \
+          #   --context . \
+          #   --dockerfile Dockerfile \
+          #   --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:${IMAGE_TAG} \
+          #   --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:latest
