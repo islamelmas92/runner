@@ -31,7 +31,7 @@ jobs:
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           APP_NAME=$(echo $BRANCH_NAME | sed 's/release\/PROD-//g' | tr '[:upper:]' '[:lower:]')
           echo "app_name=${APP_NAME}" >> $GITHUB_OUTPUT
-          echo "image_tag=prod-${APP_NAME}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+          echo "image_tag=tf:prod-${APP_NAME}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
   docker:
     needs: prepare
@@ -59,3 +59,7 @@ jobs:
           #   --dockerfile Dockerfile \
           #   --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:${IMAGE_TAG} \
           #   --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:latest
+          /kaniko/executor \
+            --context . \
+            --dockerfile Dockerfile \
+            --destination registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0
