@@ -1,0 +1,27 @@
+name: Build image
+run-name: Run test workflow on ${{ inputs.arc_name }}
+on:
+  workflow_dispatch:
+    inputs:
+      arc_name:
+        description: 'Target ARC name used for `runs-on` in job'
+        required: true
+        default: "runners-dind"
+jobs:    
+  docker:
+      runs-on: runners-dind
+      # if: ${{ contains(github.ref, 'refs/heads/develop') || contains(github.ref, 'refs/heads/release') || contains(github.ref, 'refs/heads/hotfix') }}
+      container:
+          image:  "registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+      # env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DXL }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DXL }}
+      #     AWS_DEFAULT_REGION: eu-central-1
+      steps:
+      - uses: actions/checkout@v4
+      - name: Upload image to ecr
+        run: |
+          ls
+          # echo "{ \"credsStore\": \"ecr-login\" }" > /kaniko/.docker/config.json
+          # cat /kaniko/.docker/config.json
+          # /kaniko/executor --context . --dockerfile Dockerfile --destination ${{ needs.generate-outputs.outputs.image_repo }}
