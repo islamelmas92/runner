@@ -1,0 +1,54 @@
+name: Build and Push Docker Images
+run-name: Build ${{ github.ref_name }} image
+on:
+  push:
+    branches:
+      - 'release/PROD-Dashboard'
+      - 'release/PROD-Main'
+      - 'release/PROD-ShipStation'
+      - 'release/PROD-Etsy'
+      - 'release/PROD-FileManager'
+      - 'release/PROD-Shipment'
+  workflow_dispatch:
+    inputs:
+      arc_name:
+        description: 'Target ARC name used for `runs-on` in job'
+        required: true
+        default: "runners-dind"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      app_name: ${{ steps.set-vars.outputs.app_name }}
+      image_tag: ${{ steps.set-vars.outputs.image_tag }}
+    steps:
+      - name: Set variables
+        id: set-vars
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          APP_NAME=$(echo $BRANCH_NAME | sed 's/release\/PROD-//g' | tr '[:upper:]' '[:lower:]')
+          echo "app_name=${APP_NAME}" >> $GITHUB_OUTPUT
+          echo "image_tag=prod-${APP_NAME}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+  docker:
+    needs: prepare
+    runs-on: ${{ github.event.inputs.arc_name || 'runners-dind' }}
+    container:
+      image: "gcr.io/kaniko-project/executor:latest"
+      options: --entrypoint=""
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and push image to DigitalOcean
+        env:
+          APP_NAME: ${{ needs.prepare.outputs.app_name }}
+          IMAGE_TAG: ${{ needs.prepare.outputs.image_tag }}
+        run: |
+          echo "{\"auths\":{\"registry.digitalocean.com\":{\"auth\":\"$(echo -n ${{ secrets.DO_REGISTRY }}:${{ secrets.DO_REGISTRY }} | base64 -w 0)\"}}}" > /kaniko/.docker/config.json
+          /kaniko/executor \
+            --context . \
+            --dockerfile Dockerfile \
+            --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:${IMAGE_TAG} \
+            --destination registry.digitalocean.com/customhub-dashboard/${APP_NAME}:latest
