@@ -12,8 +12,8 @@ jobs:
       runs-on: runners-dind
       # if: ${{ contains(github.ref, 'refs/heads/develop') || contains(github.ref, 'refs/heads/release') || contains(github.ref, 'refs/heads/hotfix') }}
       container:
-          # image:  "registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
-          image:  "docker.io/islamelmas92/build"
+          image:  "registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+          # image:  "docker.io/islamelmas92/build"
           credentials:
             username: ${{ secrets.DO_REGISTRY }}
             password: ${{ secrets.DO_REGISTRY }}
