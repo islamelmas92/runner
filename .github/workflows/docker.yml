@@ -12,7 +12,8 @@ jobs:
       runs-on: runners-dind
       # if: ${{ contains(github.ref, 'refs/heads/develop') || contains(github.ref, 'refs/heads/release') || contains(github.ref, 'refs/heads/hotfix') }}
       container:
-          image:  "registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+          # image:  "registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+          image:  "docker.io/islamelmas92/build"
       # env:
       #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DXL }}
       #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DXL }}
