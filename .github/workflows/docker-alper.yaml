@@ -18,7 +18,9 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: runners-dind
+    container:
+      image: alpine
     outputs:
       app_name: ${{ steps.set-vars.outputs.app_name }}
       image_tag: ${{ steps.set-vars.outputs.image_tag }}
