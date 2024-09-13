@@ -35,7 +35,7 @@ jobs:
     needs: prepare
     runs-on: runners-dind
     container:
-      image: registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0"
+      image: registry.digitalocean.com/customhub-dashboard/tf:kainko-1.0.0
       # image:  "docker.io/islamelmas92/build"
       credentials:
         username: ${{ secrets.DO_REGISTRY }}
