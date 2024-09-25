@@ -64,7 +64,7 @@ jobs:
             --dockerfile Dockerfile \
             --destination registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0
   trivy:
-    runs-on: vfcz-dind
+    runs-on: runners-dind
     needs:
     - prepare
     - docker
