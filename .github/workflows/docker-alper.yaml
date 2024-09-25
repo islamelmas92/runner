@@ -78,17 +78,9 @@ jobs:
     - name: trivy scan
       run: |
         trivy --version
-        printenv
-        trivy image  --ignorefile .trivyignore --exit-code 1 --severity CRITICAL  registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0 > /dev/null
-        trivy image  --ignorefile .trivyignore --severity HIGH,CRITICAL  registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0 --format template --template "@/contrib/html.tpl"  -o image-report.txt > /dev/null
-        trivy image  --no-progress -f table  registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0  -o summary-image-report.txt  > /dev/null
-        trivy image --no-progress --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Critical: {{ $critical }}, High: {{ $high }}'  registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0  -o trivy_summary.txt
-        cat image-report.txt
-        cat summary-image-report.txt
-        cat trivy_summary.txt
+        trivy image  --no-progress -f table  registry.digitalocean.com/customhub-dashboard/tf:test-1.0.0  -o summary-image-report.txt
     - uses: actions/upload-artifact@v4
       with:
         name: trivy-reports
         path: |
-            image-report.txt
             summary-image-report.txt
