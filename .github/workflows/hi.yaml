@@ -1,0 +1,18 @@
+name: Echo "hi" Workflow
+
+on:  
+  workflow_dispatch:
+  push:
+    branches:
+      - main  # You can change this to any branch you'd like to trigger the action
+
+jobs:
+  say_hi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Echo hi
+        run: echo "hi"
